@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style> 
+        .main-div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            
+        }
+
+        .input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        #toDoList {
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            width: 100%;
+        }
+
+        .button {
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius:20px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-right:10px;
+        }
+
+        @media (min-width: 600px) {
+            .main-div {
+                flex-direction: row;
+            }
+
+            .input {
+                width: 60%;
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-div">
+        <input type="text" placeholder="Enter what you want to do?" class="input" id="input" />
+        <button onclick="fetchToDoList()" class="button">Add to list</button>
+        <button class="button" onclick="DisplayToDoList()">Show List</button>
+    </div>
+    <div class="fetch-li" id="fetch-li">
+        <ul id="toDoList"></ul>
+    </div>
+
+    <script>
+        let list = [];
+
+        window.onload = function () {
+            if (localStorage.getItem('todos')) {
+                list = JSON.parse(localStorage.getItem('todos'));
+            }
+        };
+
+        function fetchToDoList() {
+            let listItems = document.getElementById('input').value;
+            list.push(listItems);
+            document.getElementById('input').value = "";
+            localStorage.setItem('todos', JSON.stringify(list));
+            DisplayToDoList();
+        }
+
+        function DisplayToDoList() {
+            const toDoListContainer = document.getElementById('toDoList');
+            toDoListContainer.innerHTML = "";
+
+            for (let i = 0; i < list.length; i++) {
+                const listItems = document.createElement('li');
+                const inputElement = document.createElement('input');
+                const deleteItem = document.createElement('button');
+
+                listItems.textContent = list[i];
+                inputElement.type = 'radio';
+                deleteItem.innerText = "Delete";
+                deleteItem.onclick = function () {
+                    DeleteElement(i);
+                };
+
+                toDoListContainer.appendChild(listItems);
+                toDoListContainer.appendChild(inputElement);
+                toDoListContainer.appendChild(deleteItem);
+            }
+
+            function DeleteElement(index) {
+                list.splice(index, 1);
+                localStorage.setItem('todos', JSON.stringify(list));
+                DisplayToDoList();
+            }
+        }
+    </script>
+</body>
+</html>
